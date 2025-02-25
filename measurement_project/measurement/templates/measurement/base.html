@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Measurement System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/measurement/css/style.css">
+    <style>
+        :root {
+            --primary-color: #00ff87;
+            --secondary-color: #60efff;
+            --nav-height: 80px;
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background: #0a0a0a;
+        }
+
+        #nav-animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-height);
+            z-index: 0;
+        }
+
+        .navbar {
+            position: fixed;
+            width: 100%;
+            height: var(--nav-height);
+            background: rgba(10, 10, 10, 0.8) !important;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            position: relative;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -10px;
+            right: -10px;
+            bottom: -5px;
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+            opacity: 0;
+            transform: scale(1.2);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .navbar-brand:hover::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .nav-link {
+            position: relative;
+            color: white !important;
+            font-weight: 500;
+            margin: 0 15px;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+
+        .nav-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
+        }
+
+        .content-container {
+            margin-top: var(--nav-height);
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js Navigation Animation Container -->
+    <div id="nav-animation-container"></div>
+
+    <!-- Enhanced Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-cube me-2"></i>
+                Object Measurement
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <span class="nav-link">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                {{ user.username }}
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin:logout' %}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin:login' %}">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content-container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Three.js Navigation Animation
+        const navContainer = document.getElementById('nav-animation-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / navContainer.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+        renderer.setSize(window.innerWidth, navContainer.clientHeight);
+        navContainer.appendChild(renderer.domElement);
+
+        // Create animated elements
+        const particles = [];
+        const particleCount = 50;
+
+        // Particle geometry
+        const geometry = new THREE.SphereGeometry(0.1, 8, 8);
+        const material = new THREE.MeshPhongMaterial({
+            color: 0x00ff87,
+            emissive: 0x00ff87,
+            specular: 0xffffff,
+            shininess: 100,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        // Add particles
+        for (let i = 0; i < particleCount; i++) {
+            const particle = new THREE.Mesh(geometry, material);
+            particle.position.set(
+                Math.random() * 40 - 20,
+                Math.random() * 4 - 2,
+                Math.random() * 10 - 5
+            );
+            particle.userData = {
+                velocity: new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.1,
+                    (Math.random() - 0.5) * 0.05,
+                    (Math.random() - 0.5) * 0.05
+                ),
+                initialY: particle.position.y
+            };
+            particles.push(particle);
+            scene.add(particle);
+        }
+
+        // Add lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0x00ff87, 1, 50);
+        pointLight.position.set(0, 0, 5);
+        scene.add(pointLight);
+
+        camera.position.z = 10;
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+
+            particles.forEach(particle => {
+                particle.position.add(particle.userData.velocity);
+                
+                // Bounce effect
+                if (Math.abs(particle.position.y - particle.userData.initialY) > 1) {
+                    particle.userData.velocity.y *= -1;
+                }
+
+                // Reset position if particle goes too far
+                if (Math.abs(particle.position.x) > 20) {
+                    particle.position.x = particle.position.x > 0 ? -20 : 20;
+                }
+
+                particle.rotation.x += 0.01;
+                particle.rotation.y += 0.01;
+            });
+
+            // Animate point light
+            const time = Date.now() * 0.001;
+            pointLight.position.x = Math.sin(time) * 5;
+            pointLight.position.y = Math.cos(time) * 2;
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / navContainer.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, navContainer.clientHeight);
+        }
+
+        window.addEventListener('resize', onWindowResize);
+
+        // Start animation
+        animate();
+
+        // Navbar Scroll Effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            const navbar = document.querySelector('.navbar');
+
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                navbar.style.transform = 'translateY(0)';
+            }
+
+            if (currentScroll > 100) {
+                navbar.style.background = 'rgba(10, 10, 10, 0.95) !important';
+            } else {
+                navbar.style.background = 'rgba(10, 10, 10, 0.8) !important';
+            }
+
+            lastScroll = currentScroll;
+        });
+
+        // Mouse interaction with particles
+        document.addEventListener('mousemove', (event) => {
+            const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            const mouseY = -(event.clientY / navContainer.clientHeight) * 2 + 1;
+
+            particles.forEach(particle => {
+                const distance = Math.sqrt(
+                    Math.pow(mouseX - particle.position.x/20, 2) + 
+                    Math.pow(mouseY - particle.position.y/2, 2)
+                );
+
+                if (distance < 0.5) {
+                    particle.userData.velocity.x += (mouseX - particle.position.x/20) * 0.01;
+                    particle.userData.velocity.y += (mouseY - particle.position.y/2) * 0.01;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
