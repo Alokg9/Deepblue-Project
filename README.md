@@ -1,6 +1,8 @@
 # 📏 Estimating Physical Attributes and Object Dimensions from Selfies  
 
 ## 🚀 Overview  
+![image](https://github.com/user-attachments/assets/eb1a60a1-6874-4de4-9e34-6b27a1d903a4)
+
 Accurately measuring human attributes (e.g., height, body proportions) and object dimensions often requires specialized tools like laser scanners or depth cameras.  
 This project **leverages smartphone cameras and AI-powered computer vision** to estimate dimensions from **selfies and object images**—all without extra hardware!  
 
