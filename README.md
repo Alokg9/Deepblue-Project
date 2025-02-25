@@ -57,15 +57,15 @@ pip install -r requirements.txt
 # Run the FastAPI server
 uvicorn main:app --reload
  ```
-##🎯 Why This Matters
+🎯 Why This Matters
 With the growing demand for contactless and accessible measurement tools, this project brings AI-powered precision to everyday smartphone users, empowering applications in health, product design, and home improvement.
 
-##🤝 Contributing
+🤝 Contributing
 Contributions are welcome! Fork this repo, make changes, and submit a PR.
 
-##📜 License
+📜 License
 This project is licensed under the MIT License.
 
-##📩 Contact
+📩 Contact
 📧 Email: alok.gupta.bnp@gmail.com
 🔗 LinkedIn: https://www.linkedin.com/in/alok-gupta-333a72224/
